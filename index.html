@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event and Volunteer Management</title>
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff; /* Light turquoise background */
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ffcc00; /* Yellow header */
+      color: #fff;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    .container {
+      width: 90%;
+      margin: 20px auto;
+    }
+    .form-section {
+      display: none;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #ffcc00; /* Yellow button */
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffb300; /* Darker yellow on hover */
+    }
+    .events-list, .volunteers-list, .tasks-list {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .events-list ul, .volunteers-list ul, .tasks-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .events-list li, .volunteers-list li, .tasks-list li {
+        padding: 10px;
+      background-color: #f9f9f9;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    input[type="search"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      .container {
+        width: 90%;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .form-section {
+        margin-top: 20px;
+      }
+
+      input, textarea {
+        padding: 10px;
+      }
+
+      .events-list, .volunteers-list, .tasks-list {
+        padding: 15px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      header {
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      input, textarea {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Event and Volunteer Management</h1>
+  </header>
+
+  <div class="container">
+    <button onclick="toggleForm('eventForm')">Create Event</button>
+    <button onclick="toggleForm('volunteerForm')">Add Volunteer</button>
+    <button onclick="toggleForm('taskForm')">Assign Task</button>
+
+    <!-- Create Event Form -->
+    <div class="form-section" id="eventForm">
+      <h2>Create New Event</h2>
+      <input type="text" id="eventName" placeholder="Event Name" required>
+      <input type="date" id="eventDate" required>
+      <textarea id="eventDescription" rows="4" placeholder="Event Description" required></textarea>
+      <button type="submit" id="createEventButton">Create Event</button>
+    </div>
+
+    <!-- Add Volunteer Form -->
+    <div class="form-section" id="volunteerForm">
+      <h2>Add New Volunteer</h2>
+      <input type="text" id="volunteerName" placeholder="Volunteer Name" required>
+      <input type="email" id="volunteerEmail" placeholder="Volunteer Email" required>
+      <input type="tel" id="volunteerPhone" placeholder="Volunteer Phone" required>
+      <button type="submit" id="addVolunteerButton">Add Volunteer</button>
+    </div>
+
+    <!-- Assign Task Form -->
+    <div class="form-section" id="taskForm">
+      <h2>Assign Task to Volunteer</h2>
+      <input type="text" id="taskName" placeholder="Task Name" required>
+      <input type="text" id="taskVolunteer" placeholder="Volunteer Name" required>
+      <button type="submit" id="assignTaskButton">Assign Task</button>
+    </div>
+
+    <!-- Search Filters -->
+    <div class="search">
+      <input type="search" id="searchEvent" placeholder="Search Events...">
+      <input type="search" id="searchVolunteer" placeholder="Search Volunteers...">
+    </div>
+
+    <div class="events-list">
+      <h2>Upcoming Events</h2>
+      <ul id="eventList"></ul>
+    </div>
+
+    <div class="volunteers-list">
+      <h2>Volunteers</h2>
+      <ul id="volunteerList"></ul>
+    </div>
+
+    <div class="tasks-list">
+      <h2>Assigned Tasks</h2>
+      <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Data storage
+    let events = JSON.parse(localStorage.getItem('events')) || [];
+    let volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    // Toggle form visibility
+    function toggleForm(formId) {
+      const forms = document.querySelectorAll('.form-section');
+      forms.forEach(form => form.style.display = 'none');
+      document.getElementById(formId).style.display = 'block';
+    }
+
+    // Handle event form submission
+    document.getElementById("createEventButton").addEventListener("click", function(event) {
+      event.preventDefault();
+      
+      // Get form data
+      const eventName = document.getElementById("eventName").value;
+      const eventDate = document.getElementById("eventDate").value;
+      const eventDescription = document.getElementById("eventDescription").value;
+
+      // Validate input
+      if (!eventName || !eventDate || !eventDescription) {
+        alert("Please fill in all the fields!");
+        return;
+      }
+
+      // Create new event object
+      const newEvent = {
+        name: eventName,
+        date: eventDate,
+        description: eventDescription
+      };
+
+      // Add event to events array
+      events.push(newEvent);
+
+      // Clear form
+      document.getElementById("eventForm").reset();
+
+      // Save data to localStorage
+      localStorage.setItem('events', JSON.stringify(events));
+
+      // Update events list
+      updateEventList();
+    });
+
+    // Handle volunteer form submission
+    document.getElementById("addVolunteerButton").addEventListener("click", function(event) {
+      event.preventDefault();
+
+      // Get form data
+      const volunteerName = document.getElementById("volunteerName").value;
+      const volunteerEmail = document.getElementById("volunteerEmail").value;
+      const volunteerPhone = document.getElementById("volunteerPhone").value;
+
+      // Validate input
+      if (!volunteerName || !volunteerEmail || !volunteerPhone) {
+        alert("Please fill in all the fields!");
+        return;
+      }
+
+      // Create new volunteer object
+      const newVolunteer = {
+        name: volunteerName,
+        email: volunteerEmail,
+        phone: volunteerPhone
+      };
+
+      // Add volunteer to volunteers array
+      volunteers.push(newVolunteer);
+
+      // Clear form
+      document.getElementById("volunteerForm").reset();
+
+      // Save data to localStorage
+      localStorage.setItem('volunteers', JSON.stringify(volunteers));
+
+      // Update volunteers list
+      updateVolunteerList();
+    });
+
+    // Handle task form submission
+    document.getElementById("assignTaskButton").addEventListener("click", function(event) {
+      event.preventDefault();
+
+      // Get form data
+      const taskName = document.getElementById("taskName").value;
+      const taskVolunteer = document.getElementById("taskVolunteer").value;
+
+      // Validate input
+      if (!taskName || !taskVolunteer) {
+        alert("Please fill in all the fields!");
+        return;
+      }
+
+      // Create new task object
+      const newTask = {
+        name: taskName,
+        volunteer: taskVolunteer
+      };
+
+      // Add task to tasks array
+      tasks.push(newTask);
+
+      // Clear form
+      document.getElementById("taskForm").reset();
+
+      // Save data to localStorage
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+
+      // Update tasks list
+      updateTaskList();
+    });
+
+    // Update events list UI
+    function updateEventList() {
+      const eventList = document.getElementById("eventList");
+      eventList.innerHTML = "";
+      events.forEach(event => {
+        const li = document.createElement("li");
+        li.textContent = `${event.name} (Date: ${event.date}) - ${event.description}`;
+        eventList.appendChild(li);
+      });
+    }
+
+    // Update volunteers list UI
+    function updateVolunteerList() {
+      const volunteerList = document.getElementById("volunteerList");
+      volunteerList.innerHTML = "";
+      volunteers.forEach(volunteer => {
+        const li = document.createElement("li");
+        li.textContent = `${volunteer.name} (Email: ${volunteer.email}, Phone: ${volunteer.phone})`;
+        volunteerList.appendChild(li);
+      });
+    }
+
+    // Update tasks list UI
+    function updateTaskList() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+      tasks.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = `${task.name} (Assigned to: ${task.volunteer})`;
+        taskList.appendChild(li);
+      });
+    }
+
+    // Search function for events
+    document.getElementById("searchEvent").addEventListener("input", function() {
+      const query = this.value.toLowerCase();
+      const filteredEvents = events.filter(event => event.name.toLowerCase().includes(query));
+      updateEventList(filteredEvents);
+    });
+
+    // Search function for volunteers
+    document.getElementById("searchVolunteer").addEventListener("input", function() {
+      const query = this.value.toLowerCase();
+      const filteredVolunteers = volunteers.filter(volunteer => volunteer.name.toLowerCase().includes(query));
+      updateVolunteerList(filteredVolunteers);
+    });
+
+    // Initialize lists
+    updateEventList();
+    updateVolunteerList();
+    updateTaskList();
+  </script>
+</body>
+</html>
