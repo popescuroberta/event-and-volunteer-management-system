@@ -21,7 +21,7 @@ This project is a simple Event and Volunteer Management System implemented in C+
 
 1. Clone the repository:
 
-   git clone https://github.com/yourusername/Event-Volunteer-Management.git
+   git clone https://github.com/popescuroberta/event-and-volunteer-management-system.git
 
 
 2. Navigate to the project directory:
