@@ -1,0 +1,107 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f8ff; /* Light turquoise background */
+  margin: 0;
+  padding: 0;
+}
+header {
+  background-color: #ffcc00; /* Yellow header */
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+}
+.container {
+  width: 90%;
+  margin: 20px auto;
+}
+.form-section {
+  display: none;
+}
+form {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+button {
+  background-color: #ffcc00; /* Yellow button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #ffb300; /* Darker yellow on hover */
+}
+.events-list, .volunteers-list, .tasks-list {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.events-list ul, .volunteers-list ul, .tasks-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+.events-list li, .volunteers-list li, .tasks-list li {
+  padding: 10px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+input[type="search"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .container {
+    width: 90%;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .form-section {
+    margin-top: 20px;
+  }
+
+  input, textarea {
+    padding: 10px;
+  }
+
+  .events-list, .volunteers-list, .tasks-list {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  header {
+    font-size: 16px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  input, textarea {
+    font-size: 14px;
+  }
+}
